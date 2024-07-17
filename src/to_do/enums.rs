@@ -1,10 +1,13 @@
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-
+use serde::ser::{Serialize, Serializer};
+#[derive(Clone)]
 pub enum TaskStatus {
     DONE,
     PENDING,
 }
 impl TaskStatus {
+    pub fn new(status: &String) -> TaskStatus {
+        TaskStatus::from_string(status.as_str().to_string())
+    }
     pub fn _stringify(&self) -> String {
         match &self {
             &Self::DONE => "DONE".to_string(),
