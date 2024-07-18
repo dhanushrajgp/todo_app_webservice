@@ -1,11 +1,10 @@
-use crate::to_do::ItemTypes;
-
 use super::to_do::structs::done::Done;
 use super::to_do::structs::pending::Pending;
 use super::to_do::traits::create::Create;
 use super::to_do::traits::delete::Delete;
 use super::to_do::traits::edit::Edit;
 use super::to_do::traits::get::Get;
+use crate::to_do::ItemTypes;
 use serde_json::value::Value;
 use serde_json::Map;
 
