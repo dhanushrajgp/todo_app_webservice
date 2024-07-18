@@ -1,3 +1,4 @@
+mod content_loader;
 mod items;
 use actix_web::web;
 
