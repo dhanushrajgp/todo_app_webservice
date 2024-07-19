@@ -12,22 +12,15 @@
     <title>To Do App</title>
   </head>
   <body>
+    <h1>Done Items</h1>
+    <div id="doneItems"></div>
     <h1>To Do Items</h1>
-    <input
-      type="text"
-      id="name"
-      placeholder="create to do 
-             item"
-    />
+    <div id="pendingItems"></div>
+    <input type="text" id="name" placeholder="create to do
+     item">
     <button id="create-button" value="Send">Create</button>
-  </body>
-  <script>
-    let createButton = document.getElementById("create-button");
-    createButton.addEventListener("click", postAlert);
-    function postAlert() {
-      let titleInput = document.getElementById("name");
-      alert(titleInput.value);
-      titleInput.value = null;
-    }
-  </script>
+</body>
+<script>
+    {{JAVASCRIPT}}
+</script>
 </html>
