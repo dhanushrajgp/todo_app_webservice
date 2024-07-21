@@ -2,11 +2,15 @@ version: "3.7"
 services:
   postgres:
     container_name: 'to-do-postgres'
-    image: 'postgres:11.2'
+    image: 'postgres:12.19'
     restart: always
     ports:
       - '5432:5432'
     environment:
-      - 'POSTGRES_USER=username'
-      - 'POSTGRES_DB=to_do'
-      - 'POSTGRES_PASSWORD=password'
+      - POSTGRES_DB= ${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
