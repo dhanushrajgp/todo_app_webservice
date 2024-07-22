@@ -5,6 +5,7 @@ mod json_serialization;
 mod jwt;
 mod models;
 mod to_do;
+mod config;
 mod views;
 mod database;
 use actix_service::Service;

@@ -3,17 +3,16 @@ use crate::jwt::JwToken;
 use actix_web::{web, HttpResponse};
 use crate::diesel;
 use diesel::prelude::*;
-use crate::database::establish_connection;
 use crate::schema::to_do;
+use crate::database::DB;
 
-pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken) -> HttpResponse {
-    let connection = establish_connection();
+pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken,db:DB) -> HttpResponse {
     let results = to_do::table
     .filter(to_do::columns::title.eq(&to_do_item.title));
 
     let _ = diesel::update(results)
     .set(to_do::columns::status.eq("DONE"))
-    .execute(&connection);
+    .execute(&db.connection);
 
     println!("here is the message token: {}", token.message);
     return HttpResponse::Ok().json(ToDoItems::getState());
