@@ -1,12 +1,17 @@
+#[macro_use] extern crate diesel;
+extern crate dotenv;
 use actix_web::{App, HttpServer};
 mod json_serialization;
 mod jwt;
 mod processes;
+mod models;
 mod state;
 mod to_do;
 mod views;
+mod database;
 use actix_service::Service;
 use actix_cors::Cors;
+mod schema;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
