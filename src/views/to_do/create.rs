@@ -18,7 +18,7 @@ pub async fn create(req: HttpRequest) -> HttpResponse {
     .unwrap();
     
     if items.len() == 0 {
-        let new_post = NewItem::new(title);
+        let new_post = NewItem::new(title,1);
         let _ = diesel::insert_into(to_do::table).values(&new_post)
         .execute(&connection);
     }
