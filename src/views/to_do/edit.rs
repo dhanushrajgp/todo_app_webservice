@@ -14,6 +14,5 @@ pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken,db:DB) -> Http
     .set(to_do::columns::status.eq("DONE"))
     .execute(&db.connection);
 
-    println!("here is the message token: {}", token.message);
     return HttpResponse::Ok().json(ToDoItems::getState());
 }
