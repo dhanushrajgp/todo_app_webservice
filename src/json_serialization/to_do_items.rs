@@ -9,6 +9,7 @@ use crate::database::establish_connection;
 use crate::models::item::item::Item;
 use crate::schema::to_do;
 use std::vec::Vec;
+use crate::database::DBCONNECTION;
 
 #[derive(Serialize)]
 pub struct ToDoItems {
@@ -39,10 +40,13 @@ impl ToDoItems {
         }
     }
 
-    pub fn getState() -> ToDoItems {
-        let connection = establish_connection();
-        let mut array_buffer = Vec::new();
-        let items = to_do::table.order(to_do::columns::id.asc()).load::<Item>(&connection).unwrap();
+    pub fn getState(user_id:i32) -> ToDoItems {
+        let connection = DBCONNECTION.db_connection.get().unwrap();
+
+        
+        let items = to_do::table.filter(to_do::columns::user_id.eq(&user_id))
+        .order(to_do::columns::id.asc()).load::<Item>(&connection).unwrap();
+        let mut array_buffer = Vec::with_capacity(items.len());
         for item in items{
             let status = TaskStatus::new(&item.status);
             let item = to_do_factory(&item.title, status);

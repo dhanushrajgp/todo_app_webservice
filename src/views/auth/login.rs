@@ -1,4 +1,5 @@
 use crate::diesel;
+use crate::json_serialization::login_response::LoginResponse;
 use diesel::prelude::*;
 use actix_web::{web,HttpResponse,Responder};
 use crate::database::DB;
@@ -23,13 +24,16 @@ pub async fn login(credentials: web::Json<Login>,db:DB) -> HttpResponse {
 
     match users[0].verify(password) {
         true=>{
-            let token = JwToken::new(users[0].id);
+
+            let token = JwToken::new(users[0].clone().id);
             let raw_token = token.encode();
-            let mut body = HashMap::new();
-            body.insert("token", raw_token);
-            HttpResponse::Ok().json(body)
+            let response= LoginResponse{
+                token: raw_token.clone()
+            };
+            let _body = serde_json::to_string(&response).unwrap();
+            HttpResponse::Ok().append_header(("token",raw_token)).json(&response)
         },
-        false => HttpResponse::Unauthorized().await.unwrap()
+        false => HttpResponse::Unauthorized().finish()
     }
 }
 
