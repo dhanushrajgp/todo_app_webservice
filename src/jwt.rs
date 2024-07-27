@@ -4,16 +4,15 @@ use futures::future::{ok, Ready,err};
 use actix_web::error::ErrorUnauthorized;
 use serde::{Deserialize,Serialize};
 use jsonwebtoken::{encode,decode,Algorithm,Header,EncodingKey,DecodingKey,Validation};
-use chrono::{DateTime,Utc};
-use chrono::serde::ts_seconds;
+use chrono::{Utc};
 use crate::config::Config;
 
 
 #[derive(Debug,Serialize,Deserialize)]
 pub struct JwToken {
     pub user_id:i32,
-    #[serde(with="ts_seconds")]
-    pub minted: DateTime<Utc>
+    pub exp:usize,
+
 }
 
 impl FromRequest for JwToken {
@@ -25,15 +24,18 @@ impl FromRequest for JwToken {
                 let raw_token = data.to_str().unwrap().to_string();
                 let token_result = JwToken::from_token(raw_token);
                 match token_result{
-                    Some(token)=>{
+                    Ok(token)=>{
                         return ok(token)
                     },
-                    None=>{
+                    Err(message)=>{
+                        if message == "ExpiredSignature".to_owned(){
+                            return err(ErrorUnauthorized("token expired"))
+                        }
                         let error = ErrorUnauthorized("token can't be decoded");
                         return err(error)
                     }
                 }
-            }
+            },
             None => {
                 let error = ErrorUnauthorized("token not in header under key 'token' ");
                 return err(error);
@@ -57,19 +59,22 @@ impl JwToken{
     }
 
     pub fn new(user_id:i32)-> Self{
-        let timestamp = Utc::now();
-        return JwToken{ user_id,minted:timestamp};
+        let config = Config::new();
+        let minutes = config.map.get("EXPIRE_MINUTES").unwrap().as_i64().unwrap();
+        let expiration = Utc::now().checked_add_signed(chrono::Duration::minutes(minutes)).expect("valid timestamp").timestamp();
+        return JwToken{ user_id,exp:expiration as usize};
     }
 
-    pub fn from_token(token:String)-> Option<Self>{
+    pub fn from_token(token:String)-> Result<Self,String>{
         let key = DecodingKey::from_secret(JwToken::getKey().as_ref());
-        let token_result = decode::<JwToken>(&token,&key,&Validation::new(Algorithm::HS256));
+        let token_result = decode::<JwToken>(&token,&key,&Validation::default());
         match token_result{
             Ok(data)=>{
-                Some(data.claims)
+                Ok(data.claims)
             },
-            Err(_)=>{
-                return None
+            Err(error)=>{
+                let message = format!("{}",error);
+                return Err(message)
             }
         }
     }
