@@ -15,6 +15,7 @@ pub async fn create(token:JwToken ,req: HttpRequest,db:DB) -> HttpResponse {
     let connection = establish_connection();
     let items = to_do::table
     .filter(to_do::columns::title.eq(&title.as_str()))
+    .filter(to_do::columns::user_id.eq(&token.user_id))
     .order(to_do::columns::id.asc())
     .load::<Item>(&connection)
     .unwrap();
