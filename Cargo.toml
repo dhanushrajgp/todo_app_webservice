@@ -2,6 +2,11 @@
 name = "todo_app"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
+[build-dependencies]
+serde_yaml = "0.8.23"
+serde = { version = "1.0.136", features = ["derive"] }
+
 
 [dependencies]
 serde_json="1.0.59"
@@ -18,3 +23,4 @@ lazy_static = "1.4.0"
 bcrypt = "0.13.0"
 uuid = {version = "1.0.0", features = ["serde", "v4"]}
 jsonwebtoken = "8.1.0"
+
