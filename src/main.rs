@@ -10,6 +10,7 @@ mod views;
 mod database;
 use actix_service::Service;
 use actix_cors::Cors;
+mod counter;
 mod schema;
 use futures::future::{ok,Either};
 
@@ -18,6 +19,9 @@ use futures::future::{ok,Either};
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     const ALLOWED_VERSION: &'static str= include_str!("./output_data.txt");
+    let site_counter = counter::Counter{count: 0};
+    site_counter.save();
+
     HttpServer::new(|| {
         let cors = Cors::default().allow_any_origin()
         .allow_any_method()
@@ -26,6 +30,11 @@ async fn main() -> std::io::Result<()> {
             .wrap_fn(|req, srv| {
                 println!("{:?}", req);
                 let passed:bool;
+                let mut site_counter = counter::Counter::load().unwrap();
+                site_counter.count += 1;
+                println!("{:?}",&site_counter);
+                site_counter.save();
+
                 if *&req.path().contains(&format!("/{}/",ALLOWED_VERSION)){
                     passed = true;
                 }

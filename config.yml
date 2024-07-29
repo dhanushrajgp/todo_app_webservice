@@ -1,4 +1,4 @@
-DB_URL: postgres://username:password@localhost/to_do
+DB_URL: postgres://Raj:data8986@localhost/to_do
 SECRET_KEY: secret
 EXPIRE_MINUTES: 60
 REDIS_URL: redis://127.0.0.1/
