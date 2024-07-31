@@ -1,5 +1,5 @@
 use serde::ser::{Serialize, Serializer};
-#[derive(Clone)]
+#[derive(Clone,Debug,Eq)]
 pub enum TaskStatus {
     DONE,
     PENDING,
@@ -30,5 +30,24 @@ impl Serialize for TaskStatus {
         S: Serializer,
     {
         Ok(serializer.serialize_str(&self._stringify().as_str())?)
+    }
+}
+
+impl PartialEq for TaskStatus {
+    fn eq(&self, other: &Self) -> bool {
+        match self {
+            TaskStatus::DONE => {
+                match other {
+                    &TaskStatus::DONE => return true,
+                    &TaskStatus::PENDING => false
+                }
+            },
+            TaskStatus::PENDING => {
+                match other {
+                    &TaskStatus::DONE => return false,
+                    &TaskStatus::PENDING => true
+                }
+            }
+        }
     }
 }
