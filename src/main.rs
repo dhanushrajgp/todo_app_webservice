@@ -55,7 +55,7 @@ async fn main() -> std::io::Result<()> {
                     Ok(result)
                 }
             })
-            .configure(views::views_factory).wrap(cors);
+            .configure(views::views_factory).wrap(cors).wrap(Logger::new("%a %{User-Agent}i %r %s %D"));
         return app;
     })
     .bind("127.0.0.1:8000")?
